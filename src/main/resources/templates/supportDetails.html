@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="style.css" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<title>Support Details</title>
+<style type="text/css">
+input{
+width : 300px;
+}
+
+</style>
+</head>
+<body>
+	<div style="width: 700px; margin: 100px auto">
+		<form action="" method="post" th:object="${support}">
+			<table class="table table-hover">
+				<tr>
+					<td><label>Name</label></td>
+					<td><input type="text" name="name" th:value="${support.name}"></td>
+				</tr>
+				<tr>
+					<td><label>Lastname</label></td>
+					<td><input type="text" name="lastname"
+						th:value="${support.lastname}"></td>
+				</tr>
+				<tr>
+					<td><label>Surname</label></td>
+					<td><input type="text" name="surname"
+						th:value="${support.surname}"></td>
+				</tr>
+				<tr>
+					<td><label>Phone</label></td>
+					<td><th:block th:each="phone, stat : ${support.phones}">
+							<input type="hidden" th:name="|phones[${stat.index}].id|" th:value="${phone.getId()}">
+							<input type="text" th:name="|phones[${stat.index}].phone|" th:value="${phone.getPhone()}">
+						</th:block>
+					<td>
+				</tr>
+				<tr>
+					<td><label>Email</label></td>
+					<td><th:block th:each="email, stat : ${support.emails}">
+							<input type="hidden" th:name="|emails[${stat.index}].id|" th:value="${email.getId()}">
+							<input type="text" th:name="|emails[${stat.index}].email|" th:value="${email.getEmail()}">
+
+						</th:block></td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="save"></td>
+					<td><a th:href="${support.id}-1">prev</a><span>|</span><a
+						th:href="${support.id}+1">next</a></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+</html>
