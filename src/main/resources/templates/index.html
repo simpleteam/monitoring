@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META HTTP-EQUIV="refresh" CONTENT="120">
+<link rel="stylesheet" type="text/css" href="style.css" />  
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<title>Court monitoring</title>
+
+
+<script>
+
+var element = [];
+
+function call(id) {   
+	var msg = $('#'+id).serialize();
+		$.ajax({
+	        type: 'POST',
+	        url: 'add',
+	        data: msg,
+	      });
+		  
+		$(".btn").blur();
+		element[id].css("color","#555");
+}
+
+function keypress(id){
+	element[id] = $(":focus");
+	element[id].css("color","red");
+	
+	if(event.keyCode == 13){
+		call(id);
+	}
+}
+
+function deleteElement(id){
+	deleteOnServer(id);
+	$("."+id).remove();
+}
+
+function deleteOnServer(id) {
+    $.ajax({
+      type: 'GET',
+      url: 'delete/'+id
+    });
+}
+
+function createReport(){
+	$.ajax({
+		type: 'GET',
+		url: 'report',
+		complete: function(jqXhr, textStatus){
+	        if(textStatus == "success"){
+	        	alert("success. report was created")
+	        }else{
+	        	alert("some problems have happened. report wasn't created")
+	        }
+	    }
+	        	
+	});
+}
+
+</script>
+
+</head>
+<body>
+	<input type="button" id="buttonStat" value="create report" onclick="createReport()" />
+	<div align="center" style="margin: 0 300px;">
+		<table border="0" cellpadding="2" class="table table-hover">
+			<tr id="header">
+				<th>Time Down:</th>
+				<th>Time Up:</th>
+				<th>Date:</th>
+				<th>region</th>
+				<th><label style="width: 400px;">Court:</label></th>
+				<th>Description:</th>
+				<th></th>
+			</tr>
+
+			<th:block th:each="entry : ${problems}">
+				<form action="new " method="post" th:id="${entry.id}" onsubmit="return false;">
+					<tr id="table_body" th:class="${entry.id}">
+						<td id="time" style="width: 25px;"><p th:text="${entry.timeDown}"><p/></td>
+						<td id="time" style="width: 25px;"><p th:text="${entry.timeUp}"><p/></td>
+						<td><p th:text="${entry.date}"><p/></td>
+						<td style="width: 200px;"><p th:text="${entry.region}"><p/></td>
+						<td><p th:text="${entry.court}"><p/></td>	
+						<td style="width: 350px;">
+							<input type="text" class="form-control" style="width: 280px; float: left;" name="description" th:value="${entry.description}" th:attr="onkeydown='keypress('+${entry.id}+')' ,onfocus='keypress('+${entry.id}+')'" /> 
+							<input type="button" class="btn btn-default" value="add" th:attr="onclick='call('+${entry.id}+')'" />
+							<input type="hidden" name="id" th:value="${entry.id}" />
+						</td>
+						<td><input type="button"  class="btn btn-default" value="delete" th:attr="onclick='deleteElement('+${entry.id}+')'" /></td>
+					</tr>
+				</form>
+			</th:block>
+		</table>
+	</div>
+</body>
+</html>
